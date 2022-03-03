@@ -1,4 +1,4 @@
-package davicam.AddressBook;
+package com.example.testingweb;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

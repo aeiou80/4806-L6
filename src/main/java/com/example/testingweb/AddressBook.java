@@ -1,4 +1,4 @@
-package davicam.AddressBook;
+package com.example.testingweb;
 
 import javax.persistence.*;
 import java.util.*;
