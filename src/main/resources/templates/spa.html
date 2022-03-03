@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<button id="newBookBtn">Create Address Book</button>
+
+<h3>Choose an Existing Address Book to Add Buddies to:</h3>
+<p>ID: <input id="getBookId"> </input></p>
+<button id="chooseBookBtn">Choose this book</button>
+
+<div id="buddyForm" hidden>
+    <h2>Add a Buddy to this Book:</h2>
+    <p>Name: <input id="newBuddyName"> </input> </p>
+    <p>Address: <input id="newBuddyAddress"> </input> </p>
+    <p>Phone Number: <input id="newBuddyNumber"> </input> </p>
+    <button id="newBuddyBtn">Add buddy</button>
+</div>
+
+<h4>Buddies in this Book:</h4>
+<div id="bookid"></div>
+<ul id="buddies">
+</ul>
+
+</body>
+</html>
+
+<script>
+    let addressBook = null
+
+    $(document).ready(function() {
+        document.getElementById("newBookBtn").addEventListener("click", makeBook);
+        document.getElementById("chooseBookBtn").addEventListener("click", getBook);
+        document.getElementById("newBuddyBtn").addEventListener("click", addBuddy);
+        updatePage()
+    });
+
+    const makeBook = () => {
+        console.log("clickd")
+        $.ajax({
+            url: "addressbook/",
+            type: "POST",
+        }).then(function(data) {
+            console.log("received")
+            addressBook = data
+            updatePage()
+        });
+    }
+
+    const getBook = () => {
+        const id =$("#getBookId").val()
+        $.ajax({
+            url: "addressbook/"+id+"/",
+            type: "GET",
+        }).then(function(data) {
+            addressBook = data
+            updatePage()
+        });
+    }
+
+    const addBuddy = () => {
+        const name =$("#newBuddyName").val()
+        const address =$("#newBuddyAddress").val()
+        const number =$("#newBuddyNumber").val()
+        const body = {name: name, address: address, phoneNumber: number}
+        $.ajax({
+            url: "addressbook/"+addressBook.id+"/",
+            type: "POST",
+            data: JSON.stringify(body),
+            contentType: "application/json",
+            dataType: 'json',
+        }).then(function(data) {
+            addressBook = data
+            updatePage()
+        });
+    }
+
+    const updatePage = () => {
+        if(addressBook == null) {
+            $('#buddyForm').hide()
+            return
+        }
+        $('#buddyForm').show()
+        $('#bookid').text("id: "+addressBook.id);
+        const buddyView = addressBook.buddyInfos.map( bud => "<li> Name: "+bud.name+", Address: "+bud.address+", Phone #: "+bud.phoneNumber+"</li>")
+        const buds = $("#buddies")
+        console.log(buds)
+        $("#buddies").empty()
+        $("#buddies").append(buddyView.join(''))
+    }
+
+
+
+</script>
