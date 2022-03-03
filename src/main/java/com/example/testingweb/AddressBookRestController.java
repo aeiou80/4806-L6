@@ -33,4 +33,9 @@ public class AddressBookRestController {
         return addressBookRepo.save(addressBook);
     }
 
+    @GetMapping("/greeting")
+    String greetBuddy() {
+        return "Hello, buddy";
+    }
+
 }
